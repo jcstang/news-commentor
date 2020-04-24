@@ -23,14 +23,37 @@ mongoose.connect(mongoUri, {
 });
 
 
-// async function connectMongoose() {
-//     // TODO: env variable for creds
-//     await mongoose.connect(mongoUri, {
-//         useNewUrlParser: true,
-//         useUnifiedTopology: true
-//     });
-// };
-// connectMongoose();
+
+app.get("/submit", (req, res) => {
+    let myArticle = {
+        title: "Article to read lots about",
+        link: "facebook.com"
+    };
+
+    let myComment = {
+        title: "My title for my comment",
+        body: "Thought it was pretty good, with a hint of bad"
+    }
+
+    db.Article.create(myArticle)
+        .then(function(dbArticle){
+            db.Comment.create(myComment)
+                .then(function(dbComment) {
+                    console.log('cool it went down');
+                })
+                .catch(function(err) {
+                    console.log(err);
+                });
+
+
+            res.json(dbArticle);
+        })
+        .catch(function(err){
+            console.log(err);
+        });
+
+
+});
 
 
 
