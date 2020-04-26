@@ -2,12 +2,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const dotenv = require('dotenv').config();
+const path = require('path');
 
 
 let app = express();
 // let mongoUri = "mongodb://dbuser:dbuser11@ds259351.mlab.com:59351/heroku_1x1rtxz9"
 
-let PORT = process.env.PORT || 3000;
+let PORT = process.env.PORT || 3001;
 let db = require('./models');
 
 app.use(morgan('dev'));
@@ -22,6 +23,10 @@ mongoose.connect(mongoUri, {
     useUnifiedTopology: true
 });
 
+app.get("/", (req, res) => {
+    // res.end('hi');
+    res.sendFile(path.join("./public", "index.html"));
+});
 
 
 app.get("/submit", (req, res) => {
@@ -54,7 +59,6 @@ app.get("/submit", (req, res) => {
 
 
 });
-
 
 
 // LISTEN
