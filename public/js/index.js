@@ -7,7 +7,8 @@ $(document).ready(function () {
 
 
     function scrapeArticleHandler() {
-        alert('yay!')
+        console.log('ive been clicked! - scrape article button');
+        
     }
 
 });
