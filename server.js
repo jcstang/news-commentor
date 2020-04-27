@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
     db.Article.find({})
         .then(function(dbArticleList) {
             const articleData = {
-                ready: "yes",
+                pageTitle: "Article Scraper",
                 articles: dbArticleList
             }
 
