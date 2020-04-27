@@ -64,13 +64,13 @@ app.get("/scrape", (req, res) => {
         db.Article.deleteMany({}, function() {
             db.Article.insertMany(scrapeResults)
                 .then(function(dbArticles){
-                    res.json(dbArticles);
+                    // res.json(dbArticles);
+                    res.redirect("/");
                 })
                 .catch(function(error){
-                    console.err(error);
+                    console.error(error);
                 });
         });
-
 
         // res.send('OK');
     })
