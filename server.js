@@ -33,7 +33,21 @@ mongoose.connect(MONGODB_URI, {
 app.get("/", (req, res) => {
     // res.end('hi');
     // res.sendFile(path.join("./public", "index.html"));
-    res.render("index");
+
+    db.Article.find({})
+        .then(function(dbArticleList) {
+            const articleData = {
+                ready: "yes",
+                articles: dbArticleList
+            }
+
+            res.render("index", articleData);
+        })
+        .catch(function(error){
+
+        });
+
+    // res.render("index");
 });
 
 app.get("/scrape", (req, res) => {
