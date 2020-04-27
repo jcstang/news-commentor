@@ -6,9 +6,15 @@ let ArticleSchema = new Schema({
         type: String,
         required: true
     },
+
     link: {
         type: String,
         required: true
+    },
+
+    isSaved: {
+        type: Boolean,
+        default: false
     },
 
     comment: {

@@ -65,13 +65,18 @@ app.get("/scrape", (req, res) => {
             });
         });
 
-        db.Article.create(scrapeResults)
-            .then(function(dbArticles){
-                res.json(dbArticles);
-            })
-            .catch(function(error){
 
-            });
+        // clears out the DB before we populate it with scrape data.
+        db.Article.deleteMany({}, function() {
+            db.Article.insertMany(scrapeResults)
+                .then(function(dbArticles){
+                    res.json(dbArticles);
+                })
+                .catch(function(error){
+                    console.err(error);
+                });
+        });
+
 
         // res.send('OK');
     })
@@ -81,8 +86,14 @@ app.get("/scrape", (req, res) => {
 
 });
 
-app.get("/all-data", (req, res) => {
-
+app.get("/all-articles", (req, res) => {
+    db.Article.find({})
+        .then(function(dbArticleList) {
+            res.json(dbArticleList);
+        })
+        .catch(function(err) {
+            console.err(err);
+        });
 });
 
 app.get("/create-demo", (req, res) => {
