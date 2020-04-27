@@ -23,7 +23,11 @@ app.engine("handlebars", expressHandlebars({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // If deployed, use the deployed database. Otherwise use the local mongo database
-let MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongo_madness_local";
+// let MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongo_madness_local";
+let MONGODB_URI = process.env.NODE_ENV ? process.env.MONGODB_URI : "mongodb://localhost/mongo_madness_local";
+//"mongodb://localhost/schemaexample"//
+console.log(MONGODB_URI);
+// console.log(process.env.NODE_ENV);
 
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -47,23 +51,6 @@ app.get("/scrape", (req, res) => {
         const htmlDocument = httpResponse.data;
         const $ = cheerio.load(htmlDocument);
 
-        // const allImgs = $('.feat-img img');
-        // // const allImgs = $('.feat-img');
-        // console.log(allImgs);
-        
-        // allImgs.each(function(index, anchorElement) {
-        //     // const imgSrc = $(anchorElement).src();
-        //     // const link = $(anchorElement).parent().attr('href');
-        //     const link = $(anchorElement).attr('href');
-        //     const imgSrc = $(anchorElement).children().attr('src');
-            
-        //     console.log({
-        //         imgSrc,
-        //         link
-        //     });
-        // });
-        // console.log('===============================================================');
-
         // const allHeadlineLinks = $('.post-title a');
         const allHeadlineLinks = $('.post-title a');
         const scrapeResults = [];
@@ -71,17 +58,22 @@ app.get("/scrape", (req, res) => {
         allHeadlineLinks.each(function(index, anchorElement) {
             const title = $(anchorElement).text();
             const link = $(anchorElement).attr('href');
-            // console.log({
-            //     title,
-            //     link
-            // });
+
             scrapeResults.push({
                 title,
                 link
             });
         });
 
-        res.send('OK');
+        db.Article.create(scrapeResults)
+            .then(function(dbArticles){
+                res.json(dbArticles);
+            })
+            .catch(function(error){
+
+            });
+
+        // res.send('OK');
     })
     .catch(function(err) {
         console.error(err);
