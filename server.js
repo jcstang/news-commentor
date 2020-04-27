@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 const dotenv = require('dotenv').config();
 const path = require('path');
+const expressHandlebars = require('express-handlebars');
 
 
 let app = express();
@@ -11,10 +12,13 @@ let app = express();
 let PORT = process.env.PORT || 3001;
 let db = require('./models');
 
+app.use(express.static("public"));
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static("public"));
+
+app.engine("handlebars", expressHandlebars({ defaultLayout: "main" }));
+app.set("view engine", "handlebars");
 
 
 let mongoUri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@ds259351.mlab.com:59351/heroku_1x1rtxz9`;
@@ -25,7 +29,11 @@ mongoose.connect(mongoUri, {
 
 app.get("/", (req, res) => {
     // res.end('hi');
-    res.sendFile(path.join("./public", "index.html"));
+    // res.sendFile(path.join("./public", "index.html"));
+    var hbsObject = {
+        cats: "blah"
+    };
+    res.render("index", hbsObject);
 });
 
 
