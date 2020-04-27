@@ -42,7 +42,8 @@ app.get("/", (req, res) => {
 
 app.get("/scrape", (req, res) => {
 
-    let targetWebsite = "https://9to5mac.com";
+    // let targetWebsite = "https://9to5mac.com";
+    let targetWebsite = "https://www.cultofmac.com/category/news/";
 
     axios
     .get(targetWebsite)
@@ -50,15 +51,30 @@ app.get("/scrape", (req, res) => {
 
         const htmlDocument = httpResponse.data;
         const $ = cheerio.load(htmlDocument);
+        const scrapeResults = [];
 
         // const allHeadlineLinks = $('.post-title a');
-        const allHeadlineLinks = $('.post-title a');
-        const scrapeResults = [];
-        // console.log(allHeadlineLinks);
-        allHeadlineLinks.each(function(index, anchorElement) {
-            const title = $(anchorElement).text();
-            const link = $(anchorElement).attr('href');
+        // const allHeadlineLinks = $('.post-title a');
+        // // console.log(allHeadlineLinks);
+        // allHeadlineLinks.each(function(index, anchorElement) {
+        //     const title = $(anchorElement).text();
+        //     const link = $(anchorElement).attr('href');
 
+        //     scrapeResults.push({
+        //         title,
+        //         link
+        //     });
+        // });
+
+        const allHeadlineLinks = $('.post-header > a');
+        // if(isSuccessInsertMany(allHeadlineLinks, $)) {
+        //     res.redirect("/");
+        // } else {
+        //     res.status(501).send('bad things');
+        // }
+        allHeadlineLinks.each(function(index, anchorElement) {
+            const title = $(anchorElement).children('h2').text();
+            const link = $(anchorElement).attr('href');
             scrapeResults.push({
                 title,
                 link
@@ -85,6 +101,36 @@ app.get("/scrape", (req, res) => {
     });
 
 });
+
+
+
+// function isSuccessInsertMany(headlineElements, $) {
+//     const scrapeResults = [];
+
+//     if(headlineElements !== undefined) {
+//         headlineElements.each(function(index, anchorElement) {
+//             const title = $(anchorElement).children('h2').text();
+//             const link = $(anchorElement).attr('href');
+//             scrapeResults.push({
+//                 title,
+//                 link
+//             });
+//         });
+    
+//         db.Article.deleteMany({}, function() {
+//             db.Article.insertMany(scrapeResults)
+//                 .then(function(dbArticles){
+//                     // res.json(dbArticles);
+//                     return true;
+//                 })
+//                 .catch(function(error){
+//                     console.err(error);
+//                 });
+//         });
+//     }
+
+//     return false;
+// }
 
 app.get("/all-articles", (req, res) => {
     db.Article.find({})
