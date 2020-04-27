@@ -4,6 +4,8 @@ const morgan = require('morgan');
 const dotenv = require('dotenv').config();
 const path = require('path');
 const expressHandlebars = require('express-handlebars');
+const axios = require('axios');
+const cheerio = require('cheerio');
 
 
 let app = express();
@@ -20,9 +22,10 @@ app.use(express.json());
 app.engine("handlebars", expressHandlebars({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
+// If deployed, use the deployed database. Otherwise use the local mongo database
+let MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongo_madness_local";
 
-let mongoUri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@ds259351.mlab.com:59351/heroku_1x1rtxz9`;
-mongoose.connect(mongoUri, {
+mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -30,14 +33,67 @@ mongoose.connect(mongoUri, {
 app.get("/", (req, res) => {
     // res.end('hi');
     // res.sendFile(path.join("./public", "index.html"));
-    var hbsObject = {
-        cats: "blah"
-    };
-    res.render("index", hbsObject);
+    res.render("index");
 });
 
+app.get("/scrape", (req, res) => {
 
-app.get("/submit", (req, res) => {
+    let targetWebsite = "https://9to5mac.com";
+
+    axios
+    .get(targetWebsite)
+    .then(function(httpResponse) {
+
+        const htmlDocument = httpResponse.data;
+        const $ = cheerio.load(htmlDocument);
+
+        // const allImgs = $('.feat-img img');
+        // // const allImgs = $('.feat-img');
+        // console.log(allImgs);
+        
+        // allImgs.each(function(index, anchorElement) {
+        //     // const imgSrc = $(anchorElement).src();
+        //     // const link = $(anchorElement).parent().attr('href');
+        //     const link = $(anchorElement).attr('href');
+        //     const imgSrc = $(anchorElement).children().attr('src');
+            
+        //     console.log({
+        //         imgSrc,
+        //         link
+        //     });
+        // });
+        // console.log('===============================================================');
+
+        // const allHeadlineLinks = $('.post-title a');
+        const allHeadlineLinks = $('.post-title a');
+        const scrapeResults = [];
+        // console.log(allHeadlineLinks);
+        allHeadlineLinks.each(function(index, anchorElement) {
+            const title = $(anchorElement).text();
+            const link = $(anchorElement).attr('href');
+            // console.log({
+            //     title,
+            //     link
+            // });
+            scrapeResults.push({
+                title,
+                link
+            });
+        });
+
+        res.send('OK');
+    })
+    .catch(function(err) {
+        console.error(err);
+    });
+
+});
+
+app.get("/all-data", (req, res) => {
+
+});
+
+app.get("/create-demo", (req, res) => {
     let myArticle = {
         title: "Article to read lots about",
         link: "facebook.com"
@@ -67,6 +123,8 @@ app.get("/submit", (req, res) => {
 
 
 });
+
+
 
 
 // LISTEN
