@@ -23,11 +23,7 @@ app.engine("handlebars", expressHandlebars({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // If deployed, use the deployed database. Otherwise use the local mongo database
-// let MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongo_madness_local";
 let MONGODB_URI = process.env.NODE_ENV ? process.env.MONGODB_URI : "mongodb://localhost/mongo_madness_local";
-//"mongodb://localhost/schemaexample"//
-console.log(MONGODB_URI);
-// console.log(process.env.NODE_ENV);
 
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
