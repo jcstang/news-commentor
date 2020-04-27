@@ -36,10 +36,23 @@ app.get("/", (req, res) => {
 
     db.Article.find({})
         .then(function(dbArticleList) {
+            const pageArray = [];
+
+            
+            dbArticleList.forEach(element => {
+                pageArray.push({
+                    articleTitle: element.title,
+                    articleLink: element.link
+                })
+            });
+
             const articleData = {
                 pageTitle: "Article Scraper",
-                articles: dbArticleList
+                articles: pageArray
             }
+
+            console.log(articleData);
+            console.log(pageArray);
 
             res.render("index", articleData);
         })
