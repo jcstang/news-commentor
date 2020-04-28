@@ -14,6 +14,10 @@ let app = express();
 let PORT = process.env.PORT || 3001;
 let db = require('./models');
 
+// app.use(express.static(path.join(__dirname, '/public')));
+// app.use(express.static(__dirname, 'public'));
+// app.use(express.static(path.join(__dirname, "/public")));
+// app.use(express.static(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
