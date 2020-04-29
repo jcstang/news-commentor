@@ -99,6 +99,42 @@ app.get("/", (req, res) => {
     // res.render("index");
 });
 
+app.get("/saved-articles", (req, res) => {
+    // res.end('hi');
+    // res.sendFile(path.join("./public", "index.html"));
+
+    db.Article.find({
+            isSaved: true
+        })
+        .then(function(dbArticleList) {
+            const pageArray = [];
+
+            
+            dbArticleList.forEach(element => {
+                pageArray.push({
+                    articleTitle: element.title,
+                    articleLink: element.link,
+                    articleId: element._id
+                })
+            });
+
+            const articleData = {
+                pageTitle: "Article Scraper",
+                articles: pageArray
+            }
+
+            // console.log(articleData);
+            // console.log(pageArray);
+
+            res.render("saved", articleData);
+        })
+        .catch(function(error){
+
+        });
+
+    // res.render("index");
+});
+
 app.get("/scrape", (req, res) => {
 
     // let targetWebsite = "https://9to5mac.com";
