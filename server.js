@@ -7,17 +7,10 @@ const expressHandlebars = require('express-handlebars');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-
 let app = express();
-// let mongoUri = "mongodb://dbuser:dbuser11@ds259351.mlab.com:59351/heroku_1x1rtxz9"
 
 let PORT = process.env.PORT || 3001;
 let db = require('./models');
-
-// app.use(express.static(path.join(__dirname, '/public')));
-// app.use(express.static(__dirname, 'public'));
-// app.use(express.static(path.join(__dirname, "/public")));
-// app.use(express.static(__dirname + '/public'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
@@ -26,29 +19,20 @@ app.use(express.json());
 app.engine("handlebars", expressHandlebars({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
+
 // If deployed, use the deployed database. Otherwise use the local mongo database
-let MONGODB_URI = process.env.NODE_ENV ? process.env.MONGODB_URI : "mongodb://localhost/mongo_madness_local";
+let MONGODB_URI = process.env.NODE_ENV 
+    ? process.env.MONGODB_URI 
+    : "mongodb://localhost/mongo_madness_local";
 
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
 
-// app.put("/api/article/:id", (req, res) => {
-//     console.log('did I get here?');
-//     db.Article.updateOne({
-//             _id: req.params.id
-//         },
-//         {
-//             isSaved: true
-//         })
-//         .then(function(dbArticle) {
-//             console.log('cool');
-//             res.status(202).json(dbArticle);
-//         })
-//         .catch(function() {});
-// });
 
+// ** ROUTES **
+// =============================================================
 app.put("/api/article", (req, res) => {
     console.log('did I get here?');
     console.log(req.body);
