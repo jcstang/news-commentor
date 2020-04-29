@@ -34,6 +34,37 @@ mongoose.connect(MONGODB_URI, {
     useUnifiedTopology: true
 });
 
+// app.put("/api/article/:id", (req, res) => {
+//     console.log('did I get here?');
+//     db.Article.updateOne({
+//             _id: req.params.id
+//         },
+//         {
+//             isSaved: true
+//         })
+//         .then(function(dbArticle) {
+//             console.log('cool');
+//             res.status(202).json(dbArticle);
+//         })
+//         .catch(function() {});
+// });
+
+app.put("/api/article", (req, res) => {
+    console.log('did I get here?');
+    console.log(req.body);
+    db.Article.updateOne({
+            _id: req.body._id
+        },
+        {
+            isSaved: true
+        })
+        .then(function(dbArticle) {
+            console.log('cool');
+            res.status(202).json(dbArticle);
+        })
+        .catch(function() {});
+});
+
 app.get("/", (req, res) => {
     // res.end('hi');
     // res.sendFile(path.join("./public", "index.html"));
@@ -46,7 +77,8 @@ app.get("/", (req, res) => {
             dbArticleList.forEach(element => {
                 pageArray.push({
                     articleTitle: element.title,
-                    articleLink: element.link
+                    articleLink: element.link,
+                    articleId: element._id
                 })
             });
 
@@ -55,8 +87,8 @@ app.get("/", (req, res) => {
                 articles: pageArray
             }
 
-            console.log(articleData);
-            console.log(pageArray);
+            // console.log(articleData);
+            // console.log(pageArray);
 
             res.render("index", articleData);
         })
